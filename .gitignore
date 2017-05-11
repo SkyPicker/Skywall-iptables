@@ -1,0 +1,6 @@
+/env
+/local
+
+*.db
+*.swp
+__pycache__
