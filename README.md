@@ -52,7 +52,7 @@ $ pwd > $(echo env/lib/python*/site-packages)/local.pth
 $ . env/bin/activate
 (env) $ pip install git+https://github.com/SkyPicker/Skywall.git
 (env) $ pip install -r requirements.txt
-(env) $ nodeenv -p
+(env) $ nodeenv -p --node=7.7.4
 (env) $ npm install
 (env) $ ln -s .. node_modules/skywall_iptables
 (env) $ skywall set --modules skywall_iptables
