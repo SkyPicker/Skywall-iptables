@@ -33,7 +33,7 @@ setup(
     url='https://github.com/SkyPicker/Skywall-iptables',
     author='',
     author_email='',
-    license='SEE LICENSE IN ./LICENSE',
+    license='GPL-3.0',
     install_requires=requirements(),
     packages=find_packages(),
     include_package_data=True,
