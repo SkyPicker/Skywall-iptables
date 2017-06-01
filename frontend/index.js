@@ -2,7 +2,9 @@ import React from 'react'
 import {Route} from 'react-router'
 import {Table, Nav, NavItem} from 'react-bootstrap'
 import {LinkContainer} from 'react-router-bootstrap'
-import {routesSignal, menuRenderSignal, clientsRenderSignal} from 'skywall/frontend/signals'
+import {routesSignal} from 'skywall/frontend/routes'
+import {menuRenderSignal} from 'skywall/frontend/components/Menu'
+import {clientListTableRenderSignal} from 'skywall/frontend/components/ClientListTable'
 import WithMenu from 'skywall/frontend/components/WithMenu'
 import {isElement, traverse, findElements, appendChild} from 'skywall/frontend/utils/traverse'
 import * as routes from './constants/routes'
@@ -38,7 +40,7 @@ menuRenderSignal.connect((component, rendered) => {
   return res
 })
 
-clientsRenderSignal.connect((component, rendered) => {
+clientListTableRenderSignal.connect((component, rendered) => {
   let res = rendered
   res = findElements(res, [Table, 'thead', 'tr'], (node) => {
     return appendChild(node,
