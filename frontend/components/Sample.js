@@ -1,7 +1,7 @@
 import React from 'react'
 import {compose} from 'redux'
 import signalRender from 'skywall/frontend/hocs/signalRender'
-import {sampleRenderSignal} from '../signals'
+import {RenderSignal} from 'skywall/frontend/utils/signals'
 
 
 class Sample extends React.Component {
@@ -17,6 +17,8 @@ class Sample extends React.Component {
     )
   }
 }
+
+export const sampleRenderSignal = new RenderSignal('sampleRenderSignal')
 
 export default compose(
   signalRender(sampleRenderSignal),

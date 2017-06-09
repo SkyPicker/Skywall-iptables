@@ -1,7 +1,7 @@
 from aiohttp.web import json_response
 from skywall.core.database import create_session
 from skywall.core.api import register_api
-from skywall_iptables.models.rules import Ruleset, Rule
+from skywall_iptables.models.rulesets import Ruleset, Rule
 
 
 def _ruleset_response(ruleset):
@@ -33,13 +33,13 @@ def _rule_response(rule):
 def _rules_response(rules):
     return [_rule_response(rule) for rule in rules]
 
-@register_api('GET', '/iptables/rules')
-async def get_rules(request):
+@register_api('GET', '/iptables/rulesets')
+async def get_rulesets(request):
     """
     ---
     tags:
       - Iptables module
-    summary: List of rules
+    summary: List of rulesets
     description: Returns list of all iptables rulesets with rules
     produces:
       - application/json
@@ -48,7 +48,7 @@ async def get_rules(request):
         description: List of rulesets with rules
         schema:
           type: object
-          title: GetRulesResponse
+          title: GetRulesetsResponse
           required:
             - rulesets
             - rules
