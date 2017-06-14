@@ -5,6 +5,7 @@ import {formatPattern} from 'react-router'
 import PropTypes from 'prop-types'
 import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
+import {NBSP} from 'skywall/frontend/constants/symbols'
 import signalRender from 'skywall/frontend/hocs/signalRender'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
 import {Form} from 'skywall/frontend/utils/forms'
@@ -71,7 +72,7 @@ class RulesetAddForm extends Form {
                   <IndexLinkContainer to={routes.RULESET_LIST}>
                     <Button>Cancel</Button>
                   </IndexLinkContainer>
-                  {' '}
+                  {NBSP}
                   {saveButton({form: this})}
                 </FormGroup>
               </Clearfix>

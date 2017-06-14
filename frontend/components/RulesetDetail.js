@@ -5,6 +5,7 @@ import {IndexLinkContainer} from 'react-router-bootstrap'
 import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
+import {NBSP} from 'skywall/frontend/constants/symbols'
 import confirmDirty from 'skywall/frontend/hocs/confirmDirty'
 import signalRender from 'skywall/frontend/hocs/signalRender'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
@@ -49,7 +50,7 @@ class RulesetDetail extends React.Component {
           <IndexLinkContainer to={routes.RULESET_LIST}>
             <Button>Show All Rulesets</Button>
           </IndexLinkContainer>
-          {' '}
+          {NBSP}
           <Button onClick={getRulesets}>Refresh</Button>
         </div>
         <RulesetDetailForm inactive ruleset={ruleset} registerDirty={registerDirty} />
