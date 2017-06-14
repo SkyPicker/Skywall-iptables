@@ -50,10 +50,14 @@ async def add_ruleset(request):
     """
     body = await parse_json_body(request)
     with create_session() as session:
-        active = assert_request_param_is_boolean('active', body['active'])
-        name = assert_request_param_is_string('name', body['name'])
+        active = assert_request_param_is_boolean('active', body)
+        name = assert_request_param_is_string('name', body)
         order = session.query(func.coalesce(func.max(Ruleset.order), 0) + 1)
-        ruleset = Ruleset(active=active, name=name, order=order)
+        ruleset = Ruleset(
+                order=order,
+                active=active,
+                name=name,
+                )
         session.add(ruleset)
         session.flush()
         return json_response({'ok': True, 'rulesetId': ruleset.id})

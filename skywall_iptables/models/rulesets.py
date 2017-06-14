@@ -30,7 +30,7 @@ class Rule(Model):
     order = Column(Integer, nullable=False)
     active = Column(Boolean, nullable=False)
     type = Column(Enum(RuleType, name='iptables_ruletype'), nullable=False)
-    interface = Column(String, nullable=False)
+    iface = Column(String, nullable=False)
     source = Column(String, nullable=True)
     destination = Column(String, nullable=True)
     service = Column(String, nullable=False)
@@ -42,7 +42,7 @@ class Rule(Model):
 
     __table_args__ = (
             # Order is unique per ruleset
-            UniqueConstraint('id', 'order'),
+            UniqueConstraint('ruleset_id', 'order'),
             # Source is defined only for inbound rules and destination ony for outbound rules
             CheckConstraint("""
                 CASE type

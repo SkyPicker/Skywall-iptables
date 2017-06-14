@@ -21,7 +21,7 @@ def _rule_response(rule):
             'order': rule.order,
             'active': rule.active,
             'type': rule.type.name,
-            'interface': rule.interface,
+            'iface': rule.iface,
             'source': rule.source,
             'destination': rule.destination,
             'service': rule.service,
@@ -82,7 +82,7 @@ async def get_rulesets(request):
                   - order
                   - active
                   - type
-                  - interface
+                  - iface
                   - service
                   - action
                   - comment
@@ -99,7 +99,7 @@ async def get_rulesets(request):
                     enum:
                      - inbound
                      - outbound
-                  interface:
+                  iface:
                     type: string
                   source:
                     type: string

@@ -10,8 +10,10 @@ import confirmDirty from 'skywall/frontend/hocs/confirmDirty'
 import signalRender from 'skywall/frontend/hocs/signalRender'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
 import * as routes from '../constants/routes'
+import * as ruleTypes from '../constants/ruleTypes'
 import {getRulesets, renewRulesets} from '../actions/rulesets'
 import RulesetDetailForm from './RulesetDetailForm'
+import RulesetDetailRuleTable from './RulesetDetailRuleTable'
 
 
 class RulesetDetail extends React.Component {
@@ -54,6 +56,8 @@ class RulesetDetail extends React.Component {
           <Button onClick={getRulesets}>Refresh</Button>
         </div>
         <RulesetDetailForm inactive ruleset={ruleset} registerDirty={registerDirty} />
+        <RulesetDetailRuleTable type={ruleTypes.INBOUND} ruleset={ruleset} registerDirty={registerDirty} />
+        <RulesetDetailRuleTable type={ruleTypes.OUTBOUND} ruleset={ruleset} registerDirty={registerDirty} />
       </div>
     )
   }

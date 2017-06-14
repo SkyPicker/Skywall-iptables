@@ -55,9 +55,9 @@ async def update_ruleset(request):
     with create_session() as session:
         ruleset = parse_obj_path_param(request, 'rulesetId', session, Ruleset)
         if 'active' in body:
-            active = assert_request_param_is_boolean('active', body['active'])
+            active = assert_request_param_is_boolean('active', body)
             ruleset.active = active
         if 'name' in body:
-            name = assert_request_param_is_string('name', body['name'])
+            name = assert_request_param_is_string('name', body)
             ruleset.name = name
         return json_response({'ok': True})
