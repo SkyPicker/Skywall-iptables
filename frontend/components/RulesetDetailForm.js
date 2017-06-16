@@ -9,6 +9,7 @@ import {Form} from 'skywall/frontend/utils/forms'
 import {cancelButton, saveButton, editButton} from 'skywall/frontend/utils/buttons'
 import {rulesetUpdate} from '../actions/rulesets'
 import {RulesetActive, RulesetName} from '../fields/rulesets'
+import {rulesetLabel} from '../utils/humanize'
 
 
 /** @extends React.Component */
@@ -52,7 +53,7 @@ class RulesetDetailForm extends Form {
     const {ruleset} = this.props
     return (
       <div>
-        <h2>Ruleset #{ruleset.id}</h2>
+        <h2>Ruleset: {rulesetLabel(ruleset)}</h2>
         <form onSubmit={this.handleSubmit}>
           <Row>
             <Col md={6}>{active.render()}</Col>
