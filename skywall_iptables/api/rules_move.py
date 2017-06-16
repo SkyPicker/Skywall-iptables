@@ -1,17 +1,23 @@
+import enum
 from aiohttp.web import json_response, HTTPNotFound
-from skywall.core.api import register_api, parse_obj_path_param
+from skywall.core.api import register_api, parse_obj_path_param, parse_enum_path_param
 from skywall.core.database import create_session
 from skywall_iptables.models.rulesets import Rule
 
 
-@register_api('POST', '/iptables/rules/{ruleId}/before/{beforeId}')
-async def move_rule_before(request):
+class MoveDirection(enum.Enum):
+    before = 'before'
+    after = 'after'
+
+
+@register_api('POST', '/iptables/rules/{ruleId}/{direction}/{otherId}')
+async def move_rule(request):
     """
     ---
     tags:
       - Iptables module
     summary: Move rule
-    description: Moves an existing rule before another rule
+    description: Moves an existing rule before or after another rule
     produces:
       - application/json
     parameters:
@@ -20,9 +26,17 @@ async def move_rule_before(request):
         description: ID of rule to move
         required: true
         type: integer
-      - name: beforeId
+      - name: direction
         in: path
-        description: ID of rule to move before
+        description: Whether to move the rule before or after the other rule
+        required: true
+        type: string
+        enum:
+         - before
+         - after
+      - name: otherId
+        in: path
+        description: ID of rule to move before or after
         required: true
         type: integer
     responses:
@@ -30,7 +44,7 @@ async def move_rule_before(request):
         description: Rule moved
         schema:
           type: object
-          title: MoveRuleBeforeResponse
+          title: MoveRuleResponse
           required:
             - ok
           properties:
@@ -41,68 +55,30 @@ async def move_rule_before(request):
     """
     with create_session() as session:
         rule = parse_obj_path_param(request, 'ruleId', session, Rule)
-        before = parse_obj_path_param(request, 'beforeId', session, Rule)
+        other = parse_obj_path_param(request, 'otherId', session, Rule)
+        direction = parse_enum_path_param(request, 'direction', MoveDirection)
 
-        if rule.ruleset != before.ruleset:
-            raise HTTPNotFound(reason='Requested beforeId not found')
+        if rule.ruleset != other.ruleset:
+            raise HTTPNotFound(reason='Requested otherId not found')
 
-        order = before.order
-        rule.order = -1
-        session.query(Rule)\
-                .filter((Rule.ruleset == rule.ruleset) & (Rule.order >= order))\
-                .update({'order': Rule.order + 1})
-        rule.order = order
+        if rule.order < other.order:
+            old_order = rule.order
+            new_order = other.order - 1 if direction == MoveDirection.before else other.order
 
-        return json_response({'ok': True})
+            rule.order = -new_order
+            condition = (Rule.ruleset == rule.ruleset) & (Rule.order > old_order) & (Rule.order <= new_order)
+            session.query(Rule).filter(condition).update({'order': (Rule.order - 1) * -1})
 
+        if rule.order > other.order:
+            old_order = rule.order
+            new_order = other.order if direction == MoveDirection.before else other.order + 1
 
-@register_api('POST', '/iptables/rules/{ruleId}/after/{afterId}')
-async def move_rule_after(request):
-    """
-    ---
-    tags:
-      - Iptables module
-    summary: Move rule
-    description: Moves an existing rule after another rule
-    produces:
-      - application/json
-    parameters:
-      - name: ruleId
-        in: path
-        description: ID of rule to move
-        required: true
-        type: integer
-      - name: afterId
-        in: path
-        description: ID of rule to move after
-        required: true
-        type: integer
-    responses:
-      200:
-        description: Rule moved
-        schema:
-          type: object
-          title: MoveRuleAfterResponse
-          required:
-            - ok
-          properties:
-            ok:
-              type: boolean
-      404:
-        description: Rule not found
-    """
-    with create_session() as session:
-        rule = parse_obj_path_param(request, 'ruleId', session, Rule)
-        after = parse_obj_path_param(request, 'afterId', session, Rule)
+            rule.order = -new_order
+            condition = (Rule.ruleset == rule.ruleset) & (Rule.order >= new_order) & (Rule.order < old_order)
+            session.query(Rule).filter(condition).update({'order': (Rule.order + 1) * -1})
 
-        if rule.ruleset != after.ruleset:
-            raise HTTPNotFound(reason='Requested afterId not found')
-
-        order = after.order + 1
-        rule.order = -1
-        session.query(Rule)\
-                .filter((Rule.ruleset == rule.ruleset) & (Rule.order >= order))\
-                .update({'order': Rule.order + 1})
-        rule.order = order
+        # PSQL checks the unique constaint after each row, so it's not possible to reorder rows in a single update
+        condition = (Rule.ruleset == rule.ruleset) & (Rule.order < 0)
+        session.query(Rule).filter(condition).update({'order': Rule.order * -1})
 
         return json_response({'ok': True})
