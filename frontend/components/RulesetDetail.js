@@ -8,6 +8,8 @@ import PropTypes from 'prop-types'
 import {NBSP} from 'skywall/frontend/constants/symbols'
 import confirmDirty from 'skywall/frontend/hocs/confirmDirty'
 import signalRender from 'skywall/frontend/hocs/signalRender'
+import Loading from 'skywall/frontend/components/visual/Loading'
+import NotFound from 'skywall/frontend/components/NotFound'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
 import * as routes from '../constants/routes'
 import * as ruleTypes from '../constants/ruleTypes'
@@ -42,10 +44,11 @@ class RulesetDetail extends React.Component {
   }
 
   render() {
-    if (!this.props.rulesets) return null
     const {rulesets, params, registerDirty, getRulesets} = this.props
+    if (!rulesets) return <Loading />
     const rulesetId = toInteger(params.rulesetId)
     const ruleset = find(rulesets, {id: rulesetId})
+    if (!ruleset) return <NotFound />
     return (
       <div>
         <div className="pull-right">

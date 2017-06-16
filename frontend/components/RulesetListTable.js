@@ -26,7 +26,6 @@ class RulesetListTable extends React.Component {
   }
 
   render() {
-    if (!this.props.rulesets) return null
     const {rulesets} = this.props
     return (
       <div>

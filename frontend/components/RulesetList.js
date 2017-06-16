@@ -5,6 +5,7 @@ import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {NBSP} from 'skywall/frontend/constants/symbols'
 import signalRender from 'skywall/frontend/hocs/signalRender'
+import Loading from 'skywall/frontend/components/visual/Loading'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
 import {getRulesets, renewRulesets} from '../actions/rulesets'
 import RulesetListTable from './RulesetListTable'
@@ -13,6 +14,11 @@ import RulesetListTable from './RulesetListTable'
 class RulesetList extends React.Component {
 
   static propTypes = {
+    // Props from store
+    rulesets: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    })),
+
     // Actions
     getRulesets: PropTypes.func.isRequired,
     renewRulesets: PropTypes.func.isRequired,
@@ -23,7 +29,8 @@ class RulesetList extends React.Component {
   }
 
   render() {
-    const {getRulesets} = this.props
+    const {rulesets, getRulesets} = this.props
+    if (!rulesets) return <Loading />
     return (
       <div>
         <div className="pull-right">
@@ -37,7 +44,7 @@ class RulesetList extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  // Empty
+  rulesets: state.iptablesRulesets.data.rulesets,
 })
 
 const mapDispatchToProps = {
