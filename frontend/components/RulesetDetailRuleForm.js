@@ -54,13 +54,27 @@ class RulesetDetailRuleForm extends Form {
 
   initFields() {
     return {
-      active: new CheckBoxField({initial: () => this.props.rule.active}),
-      iface: new TextField({initial: () => this.props.rule.iface}),
-      source: new TextField({initial: () => this.props.rule.source}),
-      destination: new TextField({initial: () => this.props.rule.destination}),
-      service: new TextField({initial: () => this.props.rule.service}),
-      action: new TextField({initial: () => this.props.rule.action}),
-      comment: new TextField({initial: () => this.props.rule.comment}),
+      active: new CheckBoxField({
+        initial: () => this.props.rule.active,
+      }),
+      iface: new TextField({
+        initial: () => this.props.rule.iface,
+      }),
+      source: new TextField({
+        initial: () => this.props.rule.source,
+      }),
+      destination: new TextField({
+        initial: () => this.props.rule.destination,
+      }),
+      service: new TextField({
+        initial: () => this.props.rule.service,
+      }),
+      action: new TextField({
+        initial: () => this.props.rule.action,
+      }),
+      comment: new TextField({
+        initial: () => this.props.rule.comment,
+      }),
     }
   }
 

@@ -32,8 +32,12 @@ class RulesetDetailForm extends Form {
 
   initFields() {
     return {
-      active: new RulesetActive({initial: () => this.props.ruleset.active}),
-      name: new RulesetName({initial: () => this.props.ruleset.name}),
+      active: new RulesetActive({
+        initial: () => this.props.ruleset.active,
+      }),
+      name: new RulesetName({
+        initial: () => this.props.ruleset.name,
+      }),
     }
   }
 
