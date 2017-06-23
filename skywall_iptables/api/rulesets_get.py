@@ -110,7 +110,7 @@ async def get_rulesets(request):
                     type: integer
     """
     with create_session() as session:
-        rulesets = session.query(Ruleset).order_by(Ruleset.id).all()
+        rulesets = session.query(Ruleset).order_by(Ruleset.group_id).all()
         rules = session.query(Rule).order_by(Rule.order).all()
         return json_response({
                 'rulesets': _rulesets_response(rulesets),

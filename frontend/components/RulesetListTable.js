@@ -50,7 +50,6 @@ class RulesetListTable extends React.Component {
             <Table striped bordered condensed hover responsive>
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Group</th>
                   <th>Rules</th>
                   <th>Active</th>
@@ -60,9 +59,6 @@ class RulesetListTable extends React.Component {
                 <For each="ruleset" of={rulesets}>
                   <With link={formatPattern(routes.RULESET_DETAIL, {rulesetId: ruleset.id})}>
                     <tr key={ruleset.id}>
-                      <TdLink to={link}>
-                        {ruleset.id}
-                      </TdLink>
                       <TdLink to={link}>
                         {groupLabel(groupsById[ruleset.groupId]) || EMDASH}
                       </TdLink>
