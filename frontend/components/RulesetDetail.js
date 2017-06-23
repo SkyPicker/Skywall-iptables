@@ -6,6 +6,7 @@ import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import PropTypes from 'prop-types'
 import {NBSP} from 'skywall/frontend/constants/symbols'
+import {getClients, renewClients} from 'skywall/frontend/actions/clients'
 import confirmDirty from 'skywall/frontend/hocs/confirmDirty'
 import signalRender from 'skywall/frontend/hocs/signalRender'
 import Loading from 'skywall/frontend/components/visual/Loading'
@@ -14,7 +15,7 @@ import {RenderSignal} from 'skywall/frontend/utils/signals'
 import * as routes from '../constants/routes'
 import * as ruleTypes from '../constants/ruleTypes'
 import {getRulesets, renewRulesets} from '../actions/rulesets'
-import RulesetDetailForm from './RulesetDetailForm'
+import RulesetDetailAlert from './RulesetDetailAlert'
 import RulesetDetailRuleTable from './RulesetDetailRuleTable'
 
 
@@ -24,14 +25,19 @@ class RulesetDetail extends React.Component {
     // Props from router
     params: PropTypes.shape({
       rulesetId: PropTypes.string.isRequired,
-    }),
+    }).isRequired,
 
     // Props from store
+    groups: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    })),
     rulesets: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
     })),
 
     // Actions
+    getClients: PropTypes.func.isRequired,
+    renewClients: PropTypes.func.isRequired,
     getRulesets: PropTypes.func.isRequired,
     renewRulesets: PropTypes.func.isRequired,
 
@@ -39,13 +45,24 @@ class RulesetDetail extends React.Component {
     registerDirty: PropTypes.func.isRequired,
   }
 
+  constructor(props) {
+    super(props)
+    this.refresh = this.refresh.bind(this)
+  }
+
   componentDidMount() {
+    this.props.renewClients()
     this.props.renewRulesets()
   }
 
+  refresh() {
+    this.props.getClients()
+    this.props.getRulesets()
+  }
+
   render() {
-    const {rulesets, params, registerDirty, getRulesets} = this.props
-    if (!rulesets) return <Loading />
+    const {groups, rulesets, params, registerDirty} = this.props
+    if (!groups || !rulesets) return <Loading />
     const rulesetId = toInteger(params.rulesetId)
     const ruleset = find(rulesets, {id: rulesetId})
     if (!ruleset) return <NotFound />
@@ -56,9 +73,9 @@ class RulesetDetail extends React.Component {
             <Button>Show All Rulesets</Button>
           </IndexLinkContainer>
           {NBSP}
-          <Button onClick={getRulesets}>Refresh</Button>
+          <Button onClick={this.refresh}>Refresh</Button>
         </div>
-        <RulesetDetailForm inactive ruleset={ruleset} registerDirty={registerDirty} />
+        <RulesetDetailAlert ruleset={ruleset} />
         <RulesetDetailRuleTable type={ruleTypes.INBOUND} ruleset={ruleset} registerDirty={registerDirty} />
         <RulesetDetailRuleTable type={ruleTypes.OUTBOUND} ruleset={ruleset} registerDirty={registerDirty} />
       </div>
@@ -67,10 +84,13 @@ class RulesetDetail extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  groups: state.clients.data.groups,
   rulesets: state.iptablesRulesets.data.rulesets,
 })
 
 const mapDispatchToProps = {
+  getClients,
+  renewClients,
   getRulesets,
   renewRulesets,
 }

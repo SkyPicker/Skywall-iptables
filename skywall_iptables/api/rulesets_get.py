@@ -7,9 +7,8 @@ from skywall_iptables.models.rulesets import Ruleset, Rule
 def _ruleset_response(ruleset):
     return {
             'id': ruleset.id,
-            'order': ruleset.order,
             'active': ruleset.active,
-            'name': ruleset.name,
+            'groupId': ruleset.group_id,
             }
 
 def _rulesets_response(rulesets):
@@ -60,18 +59,14 @@ async def get_rulesets(request):
                 title: Ruleset
                 required:
                   - id
-                  - order
                   - active
-                  - name
                 properties:
                   id:
                     type: integer
-                  order:
-                    type: integer
                   active:
                     type: boolean
-                  name:
-                    type: string
+                  groupId:
+                    type: integer
             rules:
               type: array
               items:
@@ -115,7 +110,7 @@ async def get_rulesets(request):
                     type: integer
     """
     with create_session() as session:
-        rulesets = session.query(Ruleset).order_by(Ruleset.order).all()
+        rulesets = session.query(Ruleset).order_by(Ruleset.id).all()
         rules = session.query(Rule).order_by(Rule.order).all()
         return json_response({
                 'rulesets': _rulesets_response(rulesets),

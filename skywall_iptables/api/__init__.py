@@ -2,7 +2,6 @@ import skywall_iptables.api.rules_add
 import skywall_iptables.api.rules_delete
 import skywall_iptables.api.rules_move
 import skywall_iptables.api.rules_update
-import skywall_iptables.api.rulesets_add
 import skywall_iptables.api.rulesets_get
 import skywall_iptables.api.rulesets_update
 import skywall_iptables.api.sample

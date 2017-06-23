@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {NBSP} from 'skywall/frontend/constants/symbols'
+import {getClients, renewClients} from 'skywall/frontend/actions/clients'
 import signalRender from 'skywall/frontend/hocs/signalRender'
 import Loading from 'skywall/frontend/components/visual/Loading'
 import {RenderSignal} from 'skywall/frontend/utils/signals'
@@ -15,27 +16,43 @@ class RulesetList extends React.Component {
 
   static propTypes = {
     // Props from store
+    groups: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    })),
     rulesets: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
     })),
 
     // Actions
+    getClients: PropTypes.func.isRequired,
+    renewClients: PropTypes.func.isRequired,
     getRulesets: PropTypes.func.isRequired,
     renewRulesets: PropTypes.func.isRequired,
   }
 
+  constructor(props) {
+    super(props)
+    this.refresh = this.refresh.bind(this)
+  }
+
   componentDidMount() {
+    this.props.renewClients()
     this.props.renewRulesets()
   }
 
+  refresh() {
+    this.props.getClients()
+    this.props.getRulesets()
+  }
+
   render() {
-    const {rulesets, getRulesets} = this.props
-    if (!rulesets) return <Loading />
+    const {groups, rulesets} = this.props
+    if (!groups || !rulesets) return <Loading />
     return (
       <div>
         <div className="pull-right">
           {NBSP}
-          <Button onClick={getRulesets}>Refresh</Button>
+          <Button onClick={this.refresh}>Refresh</Button>
         </div>
         <RulesetListTable />
       </div>
@@ -44,10 +61,13 @@ class RulesetList extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
+  groups: state.clients.data.groups,
   rulesets: state.iptablesRulesets.data.rulesets,
 })
 
 const mapDispatchToProps = {
+  getClients,
+  renewClients,
   getRulesets,
   renewRulesets,
 }

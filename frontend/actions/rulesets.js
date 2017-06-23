@@ -35,23 +35,6 @@ export const renewRulesets = () => (dispatch, getState) => {
   }
 }
 
-export const rulesetAdd = (data) => (dispatch) => {
-  dispatch(fetchingStart('iptablesRulesetAdd'))
-  return api('POST', routes.API_RULESET_ADD, {data})
-    .then(async (data) => {
-      await dispatch(getRulesets())
-      dispatch(fetchingStop('iptablesRulesetAdd'))
-      dispatch(alertsRemove('iptablesRulesetAdd'))
-      return {ok: true, data}
-    })
-    .catch((err) => {
-      dispatch(fetchingStop('iptablesRulesetAdd'))
-      dispatch(alertsError('iptablesRulesetAdd', 'Ruleset add failed', err))
-      dispatch(getRulesets())
-      return {ok: false}
-    })
-}
-
 export const rulesetUpdate = (rulesetId, data) => (dispatch) => {
   dispatch(fetchingStart('iptablesRulesetUpdate'))
   return api('PUT', routes.API_RULESET_UPDATE, {params: {rulesetId}, data})
