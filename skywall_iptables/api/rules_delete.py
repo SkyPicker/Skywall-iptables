@@ -1,10 +1,15 @@
 from aiohttp.web import json_response
+from skywall.core.signals import Signal
 from skywall.core.api import register_api, parse_obj_path_param
 from skywall.core.database import create_session
-from skywall_iptables.models.rulesets import Rule
+from skywall_iptables.models.rules import Rule, before_rule_delete, after_rule_delete
 
 
-@register_api('DELETE', '/iptables/rules/{ruleId}')
+before_delete_rule = Signal('before_delete_rule')
+after_delete_rule = Signal('before_delete_rule')
+
+
+@register_api('DELETE', '/iptables/rules/{ruleId}', before_delete_rule, after_delete_rule)
 async def delete_rule(request):
     """
     ---
@@ -36,5 +41,8 @@ async def delete_rule(request):
     """
     with create_session() as session:
         rule = parse_obj_path_param(request, 'ruleId', session, Rule)
+        before_rule_delete.emit(session=session, rule=rule)
         session.delete(rule)
+        session.flush()
+        after_rule_delete.emit(session=session, rule=rule)
         return json_response({'ok': True})

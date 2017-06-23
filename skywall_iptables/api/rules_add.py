@@ -1,14 +1,20 @@
 from aiohttp.web import json_response, HTTPBadRequest
 from sqlalchemy.sql.expression import func
+from skywall.core.signals import Signal
 from skywall.core.api import (
         register_api, parse_json_body, assert_request_param_is_string, assert_request_param_is_boolean,
         assert_request_param_is_enum, assert_request_param_is_entity,
         )
 from skywall.core.database import create_session
-from skywall_iptables.models.rulesets import Ruleset, Rule, RuleType
+from skywall_iptables.models.rulesets import Ruleset
+from skywall_iptables.models.rules import Rule, RuleType, before_rule_create, after_rule_create
 
 
-@register_api('POST', '/iptables/rules')
+before_add_rule = Signal('before_add_rule')
+after_add_rule = Signal('before_add_rule')
+
+
+@register_api('POST', '/iptables/rules', before_add_rule, after_add_rule)
 async def add_rule(request):
     """
     ---
@@ -106,6 +112,8 @@ async def add_rule(request):
                 comment=comment,
                 ruleset_id=ruleset.id,
                 )
+        before_rule_create.emit(session=session, rule=rule)
         session.add(rule)
         session.flush()
+        after_rule_create.emit(session=session, rule=rule)
         return json_response({'ok': True, 'ruleId': rule.id})

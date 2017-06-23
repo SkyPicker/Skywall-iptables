@@ -1,8 +1,13 @@
 import enum
 from aiohttp.web import json_response, HTTPNotFound
+from skywall.core.signals import Signal
 from skywall.core.api import register_api, parse_obj_path_param, parse_enum_path_param
 from skywall.core.database import create_session
-from skywall_iptables.models.rulesets import Rule
+from skywall_iptables.models.rules import Rule, before_rule_move, after_rule_move
+
+
+before_move_rule = Signal('before_move_rule')
+after_move_rule = Signal('before_move_rule')
 
 
 class MoveDirection(enum.Enum):
@@ -10,7 +15,7 @@ class MoveDirection(enum.Enum):
     after = 'after'
 
 
-@register_api('POST', '/iptables/rules/{ruleId}/{direction}/{otherId}')
+@register_api('POST', '/iptables/rules/{ruleId}/{direction}/{otherId}', before_move_rule, after_move_rule)
 async def move_rule(request):
     """
     ---
@@ -61,6 +66,8 @@ async def move_rule(request):
         if rule.ruleset != other.ruleset:
             raise HTTPNotFound(reason='Requested otherId not found')
 
+        before_rule_move.emit(session=session, rule=rule, direction=direction, other=other)
+
         if rule.order < other.order:
             old_order = rule.order
             new_order = other.order - 1 if direction == MoveDirection.before else other.order
@@ -81,4 +88,6 @@ async def move_rule(request):
         condition = (Rule.ruleset == rule.ruleset) & (Rule.order < 0)
         session.query(Rule).filter(condition).update({'order': Rule.order * -1})
 
+        session.flush()
+        after_rule_move.emit(session=session, rule=rule, direction=direction, other=other)
         return json_response({'ok': True})

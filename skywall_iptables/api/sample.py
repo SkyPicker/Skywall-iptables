@@ -1,10 +1,15 @@
 from aiohttp.web import json_response
 from skywall.core.database import create_session
+from skywall.core.signals import Signal
 from skywall.core.api import register_api
-from skywall_iptables.models.sample import Sample
+from skywall_iptables.models.sample import Sample, before_sample_create, after_sample_create
 
 
-@register_api('GET', '/sample')
+before_get_sample = Signal('before_get_sample')
+after_get_sample = Signal('before_get_sample')
+
+
+@register_api('GET', '/sample', before_get_sample, after_get_sample)
 async def get_sample(request):
     """
     ---
@@ -28,5 +33,8 @@ async def get_sample(request):
     """
     with create_session() as session:
         sample = Sample(value='Sample value')
+        before_sample_create.emit(session=session, sample=sample)
         session.add(sample)
+        session.flush()
+        after_sample_create.emit(session=session, sample=sample)
         return json_response({'message': 'Sample response'})

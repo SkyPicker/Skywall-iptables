@@ -1,13 +1,18 @@
 from aiohttp.web import json_response, HTTPBadRequest
+from skywall.core.signals import Signal
 from skywall.core.api import (
         register_api, parse_json_body, parse_obj_path_param, assert_request_param_is_string,
         assert_request_param_is_boolean,
         )
 from skywall.core.database import create_session
-from skywall_iptables.models.rulesets import Rule, RuleType
+from skywall_iptables.models.rules import Rule, RuleType, before_rule_update, after_rule_update
 
 
-@register_api('PUT', '/iptables/rules/{ruleId}')
+before_update_rule = Signal('before_update_rule')
+after_update_rule = Signal('before_update_rule')
+
+
+@register_api('PUT', '/iptables/rules/{ruleId}', before_update_rule, after_update_rule)
 async def update_rule(request):
     """
     ---
@@ -91,4 +96,7 @@ async def update_rule(request):
             comment = assert_request_param_is_string('comment', body)
             rule.comment = comment
 
+        before_rule_update.emit(session=session, rule=rule)
+        session.flush()
+        after_rule_update.emit(session=session, rule=rule)
         return json_response({'ok': True})

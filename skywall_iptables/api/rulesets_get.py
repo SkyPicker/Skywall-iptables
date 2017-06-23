@@ -1,7 +1,13 @@
 from aiohttp.web import json_response
 from skywall.core.database import create_session
+from skywall.core.signals import Signal
 from skywall.core.api import register_api
-from skywall_iptables.models.rulesets import Ruleset, Rule
+from skywall_iptables.models.rulesets import Ruleset
+from skywall_iptables.models.rules import Rule
+
+
+before_get_rulesets = Signal('before_get_rulesets')
+after_get_rulesets = Signal('before_get_rulesets')
 
 
 def _ruleset_response(ruleset):
@@ -32,7 +38,7 @@ def _rule_response(rule):
 def _rules_response(rules):
     return [_rule_response(rule) for rule in rules]
 
-@register_api('GET', '/iptables/rulesets')
+@register_api('GET', '/iptables/rulesets', before_get_rulesets, after_get_rulesets)
 async def get_rulesets(request):
     """
     ---
