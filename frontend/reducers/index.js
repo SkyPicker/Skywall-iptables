@@ -1,8 +1,7 @@
-import {reducersSignal} from 'skywall/frontend/reducers'
+import {registerReducers} from 'skywall/frontend/utils/reducers'
 import iptablesRulesets from './rulesets'
 
 
-reducersSignal.connect((reducers) => ({
-  ...reducers,
+registerReducers({
   iptablesRulesets,
-}))
+})
