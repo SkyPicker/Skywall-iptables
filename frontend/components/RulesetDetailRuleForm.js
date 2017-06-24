@@ -4,8 +4,7 @@ import PropTypes from 'prop-types'
 import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {If, With} from 'jsx-control-statements'
-import signalRender from 'skywall/frontend/hocs/signalRender'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import {Form} from 'skywall/frontend/utils/forms'
 import {TextField, CheckBoxField} from 'skywall/frontend/utils/fields'
 import * as ruleTypes from '../constants/ruleTypes'
@@ -13,7 +12,7 @@ import {ruleUpdate, ruleDelete, ruleBefore, ruleAfter} from '../actions/rules'
 
 
 /** @extends React.Component */
-class RulesetDetailRuleForm extends Form {
+export class RulesetDetailRuleFormComponent extends Form {
 
   static propTypes = {
     // Props from parent element
@@ -183,9 +182,7 @@ const mapDispatchToProps = {
   ruleAfter,
 }
 
-export const rulesetDetailRuleFormRenderSignal = new RenderSignal('rulesetDetailRuleFormRenderSignal')
-
 export default compose(
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetDetailRuleFormRenderSignal),
-)(RulesetDetailRuleForm)
+  applyOverlays,
+)(RulesetDetailRuleFormComponent)

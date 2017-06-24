@@ -8,13 +8,12 @@ import PropTypes from 'prop-types'
 import {find} from 'lodash'
 import * as routes from 'skywall/frontend/constants/routes'
 import {NBSP} from 'skywall/frontend/constants/symbols'
-import signalRender from 'skywall/frontend/hocs/signalRender'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import {groupLabel} from 'skywall/frontend/utils/humanize'
 import {rulesetUpdate} from '../actions/rulesets'
 
 
-class RulesetDetailAlert extends React.Component {
+export class RulesetDetailAlertComponent extends React.Component {
 
   static propTypes = {
     // Props from parent element
@@ -104,9 +103,7 @@ const mapDispatchToProps = {
   rulesetUpdate,
 }
 
-export const rulesetDetailAlertRenderSignal = new RenderSignal('rulesetDetailAlertRenderSignal')
-
 export default compose(
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetDetailAlertRenderSignal),
-)(RulesetDetailAlert)
+  applyOverlays,
+)(RulesetDetailAlertComponent)

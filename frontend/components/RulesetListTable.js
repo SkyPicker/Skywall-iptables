@@ -7,14 +7,13 @@ import PropTypes from 'prop-types'
 import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {EMDASH, CHECK_MARK, CROSS_MARK} from 'skywall/frontend/constants/symbols'
-import signalRender from 'skywall/frontend/hocs/signalRender'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import {groupLabel} from 'skywall/frontend/utils/humanize'
 import TdLink from 'skywall/frontend/components/visual/TdLink'
 import * as routes from '../constants/routes'
 
 
-class RulesetListTable extends React.Component {
+export class RulesetListTableComponent extends React.Component {
 
   static propTypes = {
     // Props from store
@@ -90,9 +89,7 @@ const mapDispatchToProps = {
   // Empty
 }
 
-export const rulesetListTableRenderSignal = new RenderSignal('rulesetListTableRenderSignal')
-
 export default compose(
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetListTableRenderSignal),
-)(RulesetListTable)
+  applyOverlays,
+)(RulesetListTableComponent)

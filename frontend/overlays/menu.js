@@ -1,12 +1,13 @@
 import React from 'react'
 import {Nav, NavItem} from 'react-bootstrap'
 import {LinkContainer} from 'react-router-bootstrap'
-import {menuRenderSignal} from 'skywall/frontend/components/Menu'
+import {MenuComponent} from 'skywall/frontend/components/Menu'
+import {registerOverlay} from 'skywall/frontend/utils/overlays'
 import {findElements, appendChildren} from 'skywall/frontend/utils/traverse'
 import * as routes from '../constants/routes'
 
 
-menuRenderSignal.connect((component, rendered) => {
+registerOverlay(MenuComponent, (rendered) => {
   let res = rendered
   res = findElements(res, [Nav], (node) => {
     return appendChildren(node, [

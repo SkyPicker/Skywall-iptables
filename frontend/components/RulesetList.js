@@ -5,14 +5,13 @@ import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {NBSP} from 'skywall/frontend/constants/symbols'
 import {getClients, renewClients} from 'skywall/frontend/actions/clients'
-import signalRender from 'skywall/frontend/hocs/signalRender'
 import Loading from 'skywall/frontend/components/visual/Loading'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import {getRulesets, renewRulesets} from '../actions/rulesets'
 import RulesetListTable from './RulesetListTable'
 
 
-class RulesetList extends React.Component {
+export class RulesetListComponent extends React.Component {
 
   static propTypes = {
     // Props from store
@@ -72,9 +71,7 @@ const mapDispatchToProps = {
   renewRulesets,
 }
 
-export const rulesetListRenderSignal = new RenderSignal('rulesetListRenderSignal')
-
 export default compose(
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetListRenderSignal),
-)(RulesetList)
+  applyOverlays,
+)(RulesetListComponent)

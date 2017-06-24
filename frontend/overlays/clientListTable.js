@@ -1,10 +1,11 @@
 import React from 'react'
 import {Table} from 'react-bootstrap'
-import {clientListTableRenderSignal} from 'skywall/frontend/components/ClientListTable'
+import {ClientListTableComponent} from 'skywall/frontend/components/ClientListTable'
+import {registerOverlay} from 'skywall/frontend/utils/overlays'
 import {findElements, appendChildren} from 'skywall/frontend/utils/traverse'
 
 
-clientListTableRenderSignal.connect((component, rendered) => {
+registerOverlay(ClientListTableComponent, (rendered) => {
   let res = rendered
   res = findElements(res, [Table, 'thead', 'tr'], (node) => {
     return appendChildren(node,

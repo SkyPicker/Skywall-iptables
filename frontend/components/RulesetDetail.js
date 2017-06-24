@@ -8,10 +8,9 @@ import PropTypes from 'prop-types'
 import {NBSP} from 'skywall/frontend/constants/symbols'
 import {getClients, renewClients} from 'skywall/frontend/actions/clients'
 import confirmDirty from 'skywall/frontend/hocs/confirmDirty'
-import signalRender from 'skywall/frontend/hocs/signalRender'
 import Loading from 'skywall/frontend/components/visual/Loading'
 import NotFound from 'skywall/frontend/components/NotFound'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import * as routes from '../constants/routes'
 import * as ruleTypes from '../constants/ruleTypes'
 import {getRulesets, renewRulesets} from '../actions/rulesets'
@@ -19,7 +18,7 @@ import RulesetDetailAlert from './RulesetDetailAlert'
 import RulesetDetailRuleTable from './RulesetDetailRuleTable'
 
 
-class RulesetDetail extends React.Component {
+export class RulesetDetailComponent extends React.Component {
 
   static propTypes = {
     // Props from router
@@ -95,10 +94,8 @@ const mapDispatchToProps = {
   renewRulesets,
 }
 
-export const rulesetDetailRenderSignal = new RenderSignal('rulesetDetailRenderSignal')
-
 export default compose(
   confirmDirty,
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetDetailRenderSignal),
-)(RulesetDetail)
+  applyOverlays,
+)(RulesetDetailComponent)

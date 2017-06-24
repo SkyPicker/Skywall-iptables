@@ -5,14 +5,13 @@ import {compose, bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {If, For} from 'jsx-control-statements'
 import {isEmpty} from 'lodash'
-import signalRender from 'skywall/frontend/hocs/signalRender'
-import {RenderSignal} from 'skywall/frontend/utils/signals'
+import {applyOverlays} from 'skywall/frontend/utils/overlays'
 import * as ruleTypes from '../constants/ruleTypes'
 import RulesetDetailRuleForm from './RulesetDetailRuleForm'
 import RulesetDetailRuleAddForm from './RulesetDetailRuleAddForm'
 
 
-class RulesetDetailRuleTable extends React.Component {
+export class RulesetDetailRuleTableComponent extends React.Component {
 
   static propTypes = {
     // Props from parent element
@@ -128,9 +127,7 @@ const mapDispatchToProps = {
   // Empty
 }
 
-export const rulesetDetailRuleTableRenderSignal = new RenderSignal('rulesetDetailRuleTableRenderSignal')
-
 export default compose(
   connect(mapStateToProps, (dispatch) => bindActionCreators(mapDispatchToProps, dispatch)),
-  signalRender(rulesetDetailRuleTableRenderSignal),
-)(RulesetDetailRuleTable)
+  applyOverlays,
+)(RulesetDetailRuleTableComponent)
