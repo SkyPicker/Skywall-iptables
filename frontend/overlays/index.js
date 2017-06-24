@@ -1,2 +1,3 @@
-import './menu'
-import './clientListTable'
+import './ClientListTable'
+import './Menu'
+import './Router'
