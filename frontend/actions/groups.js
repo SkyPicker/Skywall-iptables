@@ -1,5 +1,5 @@
 import {afterGroupAdd, afterGroupDelete} from 'skywall/frontend/actions/groups'
-import {getRulesets} from './actions/rulesets'
+import {getRulesets} from './rulesets'
 
 
 afterGroupAdd.connect(({dispatch}) => dispatch(getRulesets()))

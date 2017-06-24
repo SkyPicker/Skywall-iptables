@@ -1,3 +1,3 @@
-import './reducers'
+import './actions'
 import './overlays'
-import './signals'
+import './reducers'
