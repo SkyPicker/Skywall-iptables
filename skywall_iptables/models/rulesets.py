@@ -19,7 +19,7 @@ class Ruleset(Model):
     active = Column(Boolean, nullable=False, default=False)
     group_id = Column(Integer, ForeignKey('group.id'), nullable=True, unique=True)
 
-    rules = relationship('Rule', back_populates='ruleset',
+    rules = relationship('Rule', back_populates='ruleset', order_by='Rule.order',
                 cascade='save-update, merge, delete, delete-orphan')
 
     # Relations to Skywall core models
@@ -37,10 +37,22 @@ class Ruleset(Model):
         return '<Ruleset id={0.id} group_id={0.group_id}>'.format(self)
 
 
+def get_group_ruleset(session, group):
+    """
+    We can't use directly `group.iptables_ruleset` for the DEFAULT group because it is represented by `None`.
+    Unless we are sure the group is not DEFAULT, we must use `get_group_ruleset(session, group)` instead.
+    """
+    if group is None:
+        # pylint: disable=singleton-comparison
+        return session.query(Ruleset).filter(Ruleset.group_id == None).first()
+    else:
+        return group.iptables_ruleset
+
+
 @after_database_connect.connect
 def after_database_connect_listener():
     """
-    Automatically create any missing rulesets when starting server. Useful if there were some groups
+    Automatically create all missing rulesets when starting server. Useful if there were some groups
     created before the module was enabled. Also creates a ruleset for the DEFAULT group if there is
     none, yet.
     """
