@@ -8,6 +8,9 @@ from skywall.core.api import (
 from skywall.core.database import create_session
 from skywall_iptables.models.rulesets import Ruleset
 from skywall_iptables.models.rules import Rule, RuleType, before_rule_create, after_rule_create
+from skywall_iptables.utils.validations import (
+        validate_iface, validate_source, validate_destination, validate_service, validate_action,
+        )
 
 
 before_add_rule = Signal('before_add_rule')
@@ -81,23 +84,23 @@ async def add_rule(request):
     with create_session() as session:
         active = assert_request_param_is_boolean('active', body)
         type = assert_request_param_is_enum('type', body, RuleType)
-        iface = assert_request_param_is_string('iface', body)
+        iface = validate_iface(assert_request_param_is_string('iface', body))
         source = None
         destination = None
-        service = assert_request_param_is_string('service', body)
-        action = assert_request_param_is_string('action', body)
+        service = validate_service(assert_request_param_is_string('service', body))
+        action = validate_action(assert_request_param_is_string('action', body))
         comment = assert_request_param_is_string('comment', body)
         ruleset = assert_request_param_is_entity('rulesetId', body, session, Ruleset)
 
         if type == RuleType.inbound:
             if 'destination' in body:
                 raise HTTPBadRequest(reason='Redundand destination for inbound rule')
-            source = assert_request_param_is_string('source', body)
+            source = validate_source(assert_request_param_is_string('source', body))
 
         if type == RuleType.outbound:
             if 'source' in body:
                 raise HTTPBadRequest(reason='Redundand source for outbound rule')
-            destination = assert_request_param_is_string('destination', body)
+            destination = validate_destination(assert_request_param_is_string('destination', body))
 
         order = session.query(func.coalesce(func.max(Rule.order), 0) + 1)
         rule = Rule(

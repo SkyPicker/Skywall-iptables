@@ -6,6 +6,9 @@ from skywall.core.api import (
         )
 from skywall.core.database import create_session
 from skywall_iptables.models.rules import Rule, RuleType, before_rule_update, after_rule_update
+from skywall_iptables.utils.validations import (
+        validate_iface, validate_source, validate_destination, validate_service, validate_action,
+        )
 
 
 before_update_rule = Signal('before_update_rule')
@@ -78,19 +81,19 @@ async def update_rule(request):
             active = assert_request_param_is_boolean('active', body)
             rule.active = active
         if 'iface' in body:
-            iface = assert_request_param_is_string('iface', body)
+            iface = validate_iface(assert_request_param_is_string('iface', body))
             rule.iface = iface
         if 'source' in body:
-            source = assert_request_param_is_string('source', body)
+            source = validate_source(assert_request_param_is_string('source', body))
             rule.source = source
         if 'destination' in body:
-            destination = assert_request_param_is_string('destination', body)
+            destination = validate_destination(assert_request_param_is_string('destination', body))
             rule.destination = destination
         if 'service' in body:
-            service = assert_request_param_is_string('service', body)
+            service = validate_service(assert_request_param_is_string('service', body))
             rule.service = service
         if 'action' in body:
-            action = assert_request_param_is_string('action', body)
+            action = validate_action(assert_request_param_is_string('action', body))
             rule.action = action
         if 'comment' in body:
             comment = assert_request_param_is_string('comment', body)

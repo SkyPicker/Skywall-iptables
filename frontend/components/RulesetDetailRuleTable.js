@@ -71,16 +71,16 @@ export class RulesetDetailRuleTableComponent extends React.Component {
               <tr>
                 <th />
                 <th>Active</th>
-                <th>Interface</th>
+                <th style={{width: '20%'}}>Interface</th>
                 <If condition={type === ruleTypes.INBOUND}>
-                  <th>Source</th>
+                  <th style={{width: '20%'}}>Source</th>
                 </If>
                 <If condition={type === ruleTypes.OUTBOUND}>
-                  <th>Destination</th>
+                  <th style={{width: '20%'}}>Destination</th>
                 </If>
-                <th>Service</th>
-                <th>Action</th>
-                <th>Comment</th>
+                <th style={{width: '20%'}}>Service</th>
+                <th style={{width: '20%'}}>Action</th>
+                <th style={{width: '20%'}}>Comment</th>
                 <th />
                 <th />
               </tr>

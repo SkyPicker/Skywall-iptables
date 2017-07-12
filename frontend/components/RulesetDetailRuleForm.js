@@ -9,6 +9,7 @@ import {Form} from 'skywall/frontend/utils/forms'
 import {TextField, CheckBoxField} from 'skywall/frontend/utils/fields'
 import * as ruleTypes from '../constants/ruleTypes'
 import {ruleUpdate, ruleDelete, ruleBefore, ruleAfter} from '../actions/rules'
+import {IfaceField, AddressField, ServiceField, ActionField} from '../fields/rules'
 
 
 /** @extends React.Component */
@@ -56,19 +57,19 @@ export class RulesetDetailRuleFormComponent extends Form {
       active: new CheckBoxField({
         initial: () => this.props.rule.active,
       }),
-      iface: new TextField({
+      iface: new IfaceField({
         initial: () => this.props.rule.iface,
       }),
-      source: new TextField({
+      source: new AddressField({
         initial: () => this.props.rule.source,
       }),
-      destination: new TextField({
+      destination: new AddressField({
         initial: () => this.props.rule.destination,
       }),
-      service: new TextField({
+      service: new ServiceField({
         initial: () => this.props.rule.service,
       }),
-      action: new TextField({
+      action: new ActionField({
         initial: () => this.props.rule.action,
       }),
       comment: new TextField({
