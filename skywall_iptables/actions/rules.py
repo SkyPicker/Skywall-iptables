@@ -1,3 +1,5 @@
+import subprocess
+from skywall.core.config import config
 from skywall.core.signals import Signal
 from skywall.core.actions import AbstractClientAction, register_client_action
 from skywall.core.server import get_server, after_server_connection_open
@@ -5,7 +7,9 @@ from skywall.core.database import create_session
 from skywall.models.clients import Client, after_client_create, after_client_update
 from skywall.models.groups import get_group_clients, after_group_update, after_group_delete
 from skywall_iptables.models.rulesets import get_group_ruleset, after_ruleset_create, after_ruleset_update
-from skywall_iptables.models.rules import after_rule_create, after_rule_update, after_rule_move, after_rule_delete
+from skywall_iptables.models.rules import (
+        RuleType, after_rule_create, after_rule_update, after_rule_move, after_rule_delete,
+        )
 
 
 @register_client_action
@@ -17,8 +21,46 @@ class ApplyRulesClientAction(AbstractClientAction):
     after_receive = Signal('ApplyRulesClientAction.after_receive')
     after_confirm = Signal('ApplyRulesClientAction.after_confirm')
 
+    def _sudo(self, args):
+        if config.get('iptables.dryrun'):
+            print('IPTABLES DRY RUN:', ['sudo', '-n'] + args)
+        else:
+            print('IPTABLES:', ['sudo', '-n'] + args)
+            subprocess.run(['sudo', '-n'] + args)
+
+    def _inbound(self):
+        self._sudo(['iptables', '-F', 'INPUT'])
+        for rule in self.payload['rules']:
+            if rule['type'] == RuleType.inbound.name:
+                args = ['iptables', '-A', 'INPUT', '-p', 'tcp']
+                if rule['iface']:
+                    args += ['-i', rule['iface']]
+                if rule['source']:
+                    args += ['-s', rule['source']]
+                if rule['service']:
+                    args += ['--dport', rule['service']]
+                if rule['action']:
+                    args += ['-j', rule['action']]
+                self._sudo(args)
+
+    def _outbound(self):
+        self._sudo(['iptables', '-F', 'OUTPUT'])
+        for rule in self.payload['rules']:
+            if rule['type'] == RuleType.outbound.name:
+                args = ['iptables', '-A', 'OUTPUT', '-p', 'tcp']
+                if rule['iface']:
+                    args += ['-o', rule['iface']]
+                if rule['destination']:
+                    args += ['-d', rule['destination']]
+                if rule['service']:
+                    args += ['--dport', rule['service']]
+                if rule['action']:
+                    args += ['-j', rule['action']]
+                self._sudo(args)
+
     def execute(self, client):
-        pass
+        self._inbound()
+        self._outbound()
 
 
 def _rule_payload(rule):

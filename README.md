@@ -5,10 +5,10 @@ Skywall module to configure iptables.
 ## Server installation
 
 First [install and configure Skywall server](https://github.com/SkyPicker/Skywall#skywall-server).
-Then to enable this module run:
+Then to enable this module run as `skywall` user:
 
 ```
-$ cd skywall
+$ cd /opt/skywall
 $ . env/bin/activate
 (env) $ pip install git+https://github.com/SkyPicker/Skywall-iptables.git
 (env) $ skywall set --modules skywall_iptables
@@ -25,19 +25,43 @@ To disable the module run:
 
 
 First [install and configure Skywall client](https://github.com/SkyPicker/Skywall#skywall-client).
-Then to enable this module run:
+Then to enable this module run as `skywall` user:
 
 ```
-$ cd skywall
+$ cd /opt/skywall
 $ . env/bin/activate
 (env) $ pip install git+https://github.com/SkyPicker/Skywall-iptables.git
 (env) $ skywall set --modules skywall_iptables
+```
+
+Skywall iptables module needs to `sudo /sbin/iptables` in order to save configured iptable rules.
+To let the module do it run `sudo visudo` and add the following line:
+
+```
+skywall ALL=NOPASSWD: /sbin/iptables
 ```
 
 To disable the module run:
 
 ```
 (env) $ skywall set --modules ~skywall_iptables
+```
+
+### Configuration
+
+#### Dry run mode
+
+I you want to just see what the module would do instead of actually saving any iptable rules
+anywhere, you can enable `dryrun` mode:
+
+```
+(env) $ skywall set --iptables.dryrun True
+```
+
+To disable `dryrun` mode run:
+
+```
+(env) $ skywall set --iptables.dryrun False
 ```
 
 ## Instructions for developers
@@ -93,6 +117,14 @@ Follow general configuration instructions for the
 [server](https://github.com/SkyPicker/Skywall#configuration) and the
 [client](https://github.com/SkyPicker/Skywall#configuration-1).
 
+#### Dry run mode
+
+During development you may not want to actually save any iptable rules anywhere. To achieve this
+just enable `dryrun` mode:
+
+```
+(env) $ skywall set --iptables.dryrun True
+```
 
 ### Running server in developement mode
 
