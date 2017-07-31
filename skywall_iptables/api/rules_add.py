@@ -14,7 +14,7 @@ from skywall_iptables.utils.validations import (
 
 
 before_add_rule = Signal('before_add_rule')
-after_add_rule = Signal('before_add_rule')
+after_add_rule = Signal('after_add_rule')
 
 
 @register_api('POST', '/iptables/rules', before_add_rule, after_add_rule)

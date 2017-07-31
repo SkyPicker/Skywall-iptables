@@ -7,7 +7,7 @@ from skywall_iptables.models.rules import Rule, before_rule_move, after_rule_mov
 
 
 before_move_rule = Signal('before_move_rule')
-after_move_rule = Signal('before_move_rule')
+after_move_rule = Signal('after_move_rule')
 
 
 class MoveDirection(enum.Enum):

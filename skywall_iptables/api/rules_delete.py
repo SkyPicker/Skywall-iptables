@@ -6,7 +6,7 @@ from skywall_iptables.models.rules import Rule, before_rule_delete, after_rule_d
 
 
 before_delete_rule = Signal('before_delete_rule')
-after_delete_rule = Signal('before_delete_rule')
+after_delete_rule = Signal('after_delete_rule')
 
 
 @register_api('DELETE', '/iptables/rules/{ruleId}', before_delete_rule, after_delete_rule)

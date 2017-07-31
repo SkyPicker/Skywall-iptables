@@ -14,9 +14,6 @@ registerOverlay(MenuComponent, (rendered) => {
       <LinkContainer key="Iptables" to={routes.RULESET_LIST}>
         <NavItem>Iptables</NavItem>
       </LinkContainer>,
-      <LinkContainer key="sample" to={routes.SAMPLE}>
-        <NavItem>Sample</NavItem>
-      </LinkContainer>,
     ])
   })
   return res

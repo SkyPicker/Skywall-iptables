@@ -12,7 +12,7 @@ from skywall_iptables.utils.validations import (
 
 
 before_update_rule = Signal('before_update_rule')
-after_update_rule = Signal('before_update_rule')
+after_update_rule = Signal('after_update_rule')
 
 
 @register_api('PUT', '/iptables/rules/{ruleId}', before_update_rule, after_update_rule)

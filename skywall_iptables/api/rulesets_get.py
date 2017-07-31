@@ -7,7 +7,7 @@ from skywall_iptables.models.rules import Rule
 
 
 before_get_rulesets = Signal('before_get_rulesets')
-after_get_rulesets = Signal('before_get_rulesets')
+after_get_rulesets = Signal('after_get_rulesets')
 
 
 def _ruleset_response(ruleset):

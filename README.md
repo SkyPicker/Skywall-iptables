@@ -51,7 +51,7 @@ To disable the module run:
 
 #### Dry run mode
 
-I you want to just see what the module would do instead of actually saving any iptable rules
+If you want to just see what the module would do instead of actually saving any iptable rules
 anywhere, you can enable `dryrun` mode:
 
 ```
@@ -153,7 +153,7 @@ Client has no developement mode yet. Just run:
 
 ### Pylint and Eslint
 
-Before commiting your code it's a good babit to lint it:
+Before commiting your code it's a good habit to lint it:
 
 ```
 (env) $ npm run eslint

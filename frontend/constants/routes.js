@@ -10,4 +10,3 @@ export const API_RULE_MOVE_AFTER = '/iptables/rules/:ruleId/after/:afterId'
 // Frontend routes
 export const RULESET_LIST = '/iptables/rulesets'
 export const RULESET_DETAIL = '/iptables/rulesets/:rulesetId'
-export const SAMPLE = '/sample'

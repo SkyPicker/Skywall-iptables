@@ -6,7 +6,7 @@ from skywall_iptables.models.rulesets import Ruleset, before_ruleset_update, aft
 
 
 before_update_ruleset = Signal('before_update_ruleset')
-after_update_ruleset = Signal('before_update_ruleset')
+after_update_ruleset = Signal('after_update_ruleset')
 
 
 @register_api('PUT', '/iptables/rulesets/{rulesetId}', before_update_ruleset, after_update_ruleset)
